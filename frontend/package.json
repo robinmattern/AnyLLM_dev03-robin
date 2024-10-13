@@ -4,10 +4,11 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "vite --open",
-    "dev": "NODE_ENV=development vite --debug --host=0.0.0.0",
+    "prod":  "vite --open",
+    "start": "node -e \"process.env.NODE_ENV='development'\" && vite --debug --host=0.0.0.0",
+    "dev":   "node -e \"process.env.NODE_ENV='development'\" && vite --debug --host=0.0.0.0",
     "build": "vite build && node scripts/postbuild.js",
-    "lint": "yarn prettier --ignore-path ../.prettierignore --write ./src",
+    "lint":  "yarn prettier --ignore-path ../.prettierignore --write ./src",
     "preview": "vite preview"
   },
   "dependencies": {
