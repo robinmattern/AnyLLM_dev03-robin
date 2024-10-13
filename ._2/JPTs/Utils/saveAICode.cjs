@@ -15,7 +15,7 @@
        var  nColor    =  32   // green 
 
        var  aRootDir  =  JPTs.findRootDir( __dirname )                                  // .(41005.02.4)
-//     var  aJPTsDir  = `${aRootDir}/._/JPTs`                                           //#.(41005.02.1)
+//     var  aJPTsDir  = `${aRootDir}/._2/JPTs`                                          //#.(41005.02.1)
        var  aDocsDir  = `${aRootDir}/docs/${aApp}/${aModel}/_t${ take( nSession, -3, '0' ) }`
 //                       setDocsDir( 'workspace', aModel, nSession )                    //#.(41002.04.1) 
 

@@ -2,7 +2,7 @@ process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
   : require("dotenv").config();
 
-    require( '../._/JPTs/Utils/globalJPTs.cjs' ); // JPTs.say( "JPTs module created") // .(41005.05.31).(41001.01.x).(40927.02.8 RAM)
+    require( '../._2/JPTs/Utils/globalJPTs.cjs' ); // JPTs.say( "JPTs module created")  // .(41012.01.1 RAM Move from /._/ to /._2/).(41005.05.31).(41001.01.x).(40927.02.8 RAM)
 
     require("./utils/logger")();
 

@@ -17,18 +17,18 @@ function findRootDir(startDir) {
    var  aRootDir = findRootDir( __dirname );
    var  aJPTsDir = `${aRootDir}/._2/JPTs`                                               // .(41012.01.2).(41005.02.1 RAM Create aJPTsDir)
 
-// var pJPTS    = require( path.join( aRootDir, '._/JPTs/Utils/saveAICode.cjs' ) );
+// var pJPTS    = require( path.join( aRootDir, '._2/JPTs/Utils/saveAICode.cjs' ) );
 
 // Define a global function to lazily load JPTs
 Object.defineProperty( global, 'JPTs', {
     get: function() {
-       if (!this._JPTs) {
-            this._JPTs = require( path.join( aRootDir, '._2/JPTs/Utils/saveAICode.cjs' ) );  // .(41012.01.3)
-            this._JPTs.findRootDir = findRootDir                                        // .(41005.02.2 RAM Add findRootDir) 
-            this._JPTs.RootDir = aRootDir 
-            this._JPTs.JPTsDir = aJPTsDir                                               // .(41005.02.3) 
-        }
-        return this._JPTs;
+    if (!this._JPTs) {
+         this._JPTs = require( path.join( aRootDir, '._2/JPTs/Utils/saveAICode.cjs' )); // .(41012.01.3)
+         this._JPTs.findRootDir = findRootDir                                           // .(41005.02.2 RAM Add findRootDir) 
+         this._JPTs.RootDir = aRootDir 
+         this._JPTs.JPTsDir = aJPTsDir                                                  // .(41005.02.3) 
+         }
+  return this._JPTs;
     },
     configurable: true
 });                                                                                     // .(40927.04.1 End)
