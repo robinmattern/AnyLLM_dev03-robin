@@ -106,6 +106,7 @@ class AnthropicLLM {
         `Anthropic chat: ${this.model} is not valid for chat completion!`
       );
 
+    JPTs.say( `Submitting request to anthropic model, "${this.model}", with temperature: ${temperature}.`)  // .(40927.04.17)
     try {
       const response = await this.anthropic.messages.create({
         model: this.model,
@@ -128,6 +129,7 @@ class AnthropicLLM {
         `Anthropic chat: ${this.model} is not valid for chat completion!`
       );
 
+    JPTs.say( `Submitting stream request to anthropic model, "${this.model}", with temperature: ${temperature}.` ) // .(40927.04.18)
     const streamRequest = await this.anthropic.messages.stream({
       model: this.model,
       max_tokens: 4096,

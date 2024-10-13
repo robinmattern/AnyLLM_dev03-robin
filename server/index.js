@@ -2,7 +2,10 @@ process.env.NODE_ENV === "development"
   ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
   : require("dotenv").config();
 
-require("./utils/logger")();
+    require( '../._/JPTs/Utils/globalJPTs.cjs' ); // JPTs.say( "JPTs module created") // .(41005.05.31).(41001.01.x).(40927.02.8 RAM)
+
+    require("./utils/logger")();
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -127,4 +130,5 @@ app.all("*", function (_, response) {
 
 // In non-https mode we need to boot at the end since the server has not yet
 // started and is `.listen`ing.
+   JPTs.say( `NodeJS Express server started. It is running at http://localhost:${process.env.SERVER_PORT}/apt/docs`) // .(41005.05.32)
 if (!process.env.ENABLE_HTTPS) bootHTTP(app, process.env.SERVER_PORT || 3001);

@@ -331,6 +331,7 @@ const LanceDb = {
     return {
       contextTexts,
       sources: this.curateSources(sources),
+      queryVector: [topN, queryVector],                                                                     // .(40927.04.19).(41004.01.1 RAM Add topN).(41003.04.2 RAM Add to performSimilaritySearch() result )
       message: false,
     };
   },

@@ -258,11 +258,16 @@ async function chatSync({
     rawHistory
   );
 
+        LLMConnector.queryVector = [ ...vectorSearchResults?.queryVector, thread ]                          // .(41005.05.1).(40927.04.24).(41007.02.4).(41003.04.4 RAM Added performSimilaritySearch() result)  
+        JPTs.saveAICodeR_Files( workspace, sources, rawHistory, messages, LLMConnector, JPTs.fncLn())       // .(41005.05.2).(41003.03.8)
+                                                                                                            
   // Send the text completion.
   const textResponse = await LLMConnector.getChatCompletion(messages, {
     temperature: workspace?.openAiTemp ?? LLMConnector.defaultTemp,
   });
 
+        JPTs.saveResponse( textResponse, JPTs.fncLn() )                                                     // .(41005.05.4).(41003.02.5)
+                                                                                                            // .(41005.05.x)
   if (!textResponse) {
     return {
       id: uuid,
@@ -552,9 +557,16 @@ async function streamChat({
     console.log(
       `\x1b[31m[STREAMING DISABLED]\x1b[0m Streaming is not available for ${LLMConnector.constructor.name}. Will use regular chat method.`
     );
+
+        LLMConnector.queryVector = [ ...vectorSearchResults?.queryVector, thread ]                          // .(41005.05.5).(41007.02.5).(41003.04.6 RAM Added performSimilaritySearch() result)  
+        JPTs.saveAICodeR_Files( workspace, sources, rawHistory, messages, LLMConnector, JPTs.fncLn())       // .(41005.05.6).(41003.03.9)
+
     completeText = await LLMConnector.getChatCompletion(messages, {
       temperature: workspace?.openAiTemp ?? LLMConnector.defaultTemp,
     });
+
+        JPTs.saveResponse( completeText, JPTs.fncLn() )                                                     // .(41005.05.8).(41003.02.10)
+                                                                                                            // .(41005.05.x)
     writeResponseChunk(response, {
       uuid,
       sources,
@@ -564,6 +576,10 @@ async function streamChat({
       error: false,
     });
   } else {
+
+        LLMConnector.queryVector = [ ...vectorSearchResults?.queryVector, thread ]                          // .(41005.05.9).(41007.02.6).(41003.04.6 RAM Added performSimilaritySearch() result)
+        JPTs.saveAICodeR_Files( workspace, sources, rawHistory, messages, LLMConnector, JPTs.fncLn())       // .(41005.05.10).(41003.03.9)
+
     const stream = await LLMConnector.streamGetChatCompletion(messages, {
       temperature: workspace?.openAiTemp ?? LLMConnector.defaultTemp,
     });
@@ -572,7 +588,8 @@ async function streamChat({
       sources,
     });
   }
-
+        JPTs.saveResponse( completeText, JPTs.fncLn() )                                                     // .(41005.05.13).(41003.02.13)
+                                                                                                            // .(41005.05.x)                                                                          
   if (completeText?.length > 0) {
     const { chat } = await WorkspaceChats.new({
       workspaceId: workspace.id,

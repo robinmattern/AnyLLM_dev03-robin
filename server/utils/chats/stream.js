@@ -226,9 +226,16 @@ async function streamChatWithWorkspace(
     console.log(
       `\x1b[31m[STREAMING DISABLED]\x1b[0m Streaming is not available for ${LLMConnector.constructor.name}. Will use regular chat method.`
     );
+
+        LLMConnector.queryVector = [ ...vectorSearchResults?.queryVector || [0,[]], thread ]                // .(41005.05.23).(41008.03.1 RAM Added || [0,[]] ).(41007.02.9 RAM Add thread).(41005.05.1 RAM Added performSimilaritySearch() result)  
+        JPTs.saveAICodeR_Files( workspace, sources, rawHistory, messages, LLMConnector, JPTs.fncLn() )      // .(41005.05.24).(41003.05.2)
+
     completeText = await LLMConnector.getChatCompletion(messages, {
       temperature: workspace?.openAiTemp ?? LLMConnector.defaultTemp,
     });
+
+        JPTs.saveResponse( completeText, JPTs.fncLn() )                                                     // .(41005.05.26)
+                                                                                                            // .(41005.05.x)
     writeResponseChunk(response, {
       uuid,
       sources,
@@ -238,6 +245,10 @@ async function streamChatWithWorkspace(
       error: false,
     });
   } else {
+
+        LLMConnector.queryVector = [ ...vectorSearchResults?.queryVector || [0,[]], thread ]                // .(41005.05.27).(41008.03.2 RAM Added || [0,[]] ).(41007.02.10)
+        JPTs.saveAICodeR_Files( workspace, sources, rawHistory, messages, LLMConnector, JPTs.fncLn() )      // .(41005.05.28)
+
     const stream = await LLMConnector.streamGetChatCompletion(messages, {
       temperature: workspace?.openAiTemp ?? LLMConnector.defaultTemp,
     });
@@ -245,6 +256,9 @@ async function streamChatWithWorkspace(
       uuid,
       sources,
     });
+
+        JPTs.saveResponse( completeText, JPTs.fncLn() )                                                     // .(41005.05.31 RAM for just stream)
+                                                                                                            // .(41005.05.x)
   }
 
   if (completeText?.length > 0) {

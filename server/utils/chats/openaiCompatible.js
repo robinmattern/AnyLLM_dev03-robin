@@ -155,12 +155,17 @@ async function chatSync({
     chatHistory: history,
   });
 
+        LLMConnector.queryVector = [ ...vectorSearchResults?.queryVector, thread ]                          // .(41005.05.14).(41007.02.7)
+        JPTs.saveAICodeR_Files( workspace, sources, rawHistory, messages, LLMConnector, JPTs.fncLn())       // .(41005.05.15)
+
   // Send the text completion.
   const textResponse = await LLMConnector.getChatCompletion(messages, {
     temperature:
       temperature ?? workspace?.openAiTemp ?? LLMConnector.defaultTemp,
   });
 
+        JPTs.saveResponse( textResponse, JPTs.fncLn() )                                                     // .(41005.05.17).(41001.03.3)
+                                                                                                            // .(41005.05.x)
   if (!textResponse) {
     return formatJSON(
       {
@@ -396,12 +401,14 @@ async function streamChat({
     );
     return;
   }
+        LLMConnector.queryVector = [ ...vectorSearchResults?.queryVector, thread ]                          // .(41005.05.18).(41007.02.8)
+        JPTs.saveAICodeR_Files( workspace, sources, rawHistory, messages, LLMConnector, JPTs.fncLn())       // .(41005.05.19)
 
   const stream = await LLMConnector.streamGetChatCompletion(messages, {
     temperature:
       temperature ?? workspace?.openAiTemp ?? LLMConnector.defaultTemp,
   });
-  const completeText = await LLMConnector.handleStream(
+  const completeText = await LLMConnector.handleStream(                                                      
     responseInterceptor,
     stream,
     {
@@ -409,7 +416,8 @@ async function streamChat({
       sources,
     }
   );
-
+        JPTs.saveResponse( completeText, JPTs.fncLn() )                                                     // .(41005.05.22)
+                                                                                                            // .(41005.05.x)
   if (completeText?.length > 0) {
     const { chat } = await WorkspaceChats.new({
       workspaceId: workspace.id,

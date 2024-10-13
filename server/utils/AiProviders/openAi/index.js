@@ -118,6 +118,8 @@ class OpenAiLLM {
         `OpenAI chat: ${this.model} is not valid for chat completion!`
       );
 
+    JPTs.say( `Submitting request to openai model ${this.model} with temperature: ${temperature}.` )        // .(40927.04.22)
+
     const result = await this.openai.chat.completions
       .create({
         model: this.model,
@@ -138,6 +140,8 @@ class OpenAiLLM {
       throw new Error(
         `OpenAI chat: ${this.model} is not valid for chat completion!`
       );
+
+    JPTs.say( `Submitting stream request to openai model ${this.model} with temperature: ${temperature}.`)  // .(40927.04.23)
 
     const streamRequest = await this.openai.chat.completions.create({
       model: this.model,

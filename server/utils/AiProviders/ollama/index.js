@@ -150,6 +150,8 @@ class OllamaAILLM {
 
   async getChatCompletion(messages = null, { temperature = 0.7 }) {
     const model = this.#ollamaClient({ temperature });
+
+    JPTs.say( `Submitting request to ollama model ${model.model} with temperature: ${temperature}.` )       // .(40927.04.20)
     const textResponse = await model
       .pipe(new StringOutputParser())
       .invoke(this.#convertToLangchainPrototypes(messages))
@@ -167,6 +169,8 @@ class OllamaAILLM {
 
   async streamGetChatCompletion(messages = null, { temperature = 0.7 }) {
     const model = this.#ollamaClient({ temperature });
+
+    JPTs.say( `Submitting stream request to ollama model ${model.model} with temperature: ${temperature}.`) // .(40927.04.21)
     const stream = await model
       .pipe(new StringOutputParser())
       .stream(this.#convertToLangchainPrototypes(messages));
