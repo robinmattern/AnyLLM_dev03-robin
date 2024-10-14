@@ -10,10 +10,10 @@
     "node": ">=18.12.1"
   },
   "scripts": {
-    "dev":   "node -e \"process.env.NODE_ENV='development'\" && nodemon --ignore documents --ignore vector-cache --ignore storage --ignore swagger --trace-warnings index.js",
-    "start": "node -e \"process.env.NODE_ENV='development'\" && nodemon --ignore documents --ignore vector-cache --ignore storage --ignore swagger --trace-warnings index.js",
-    "dev1":  "node -e \"process.env.NODE_ENV='development'\" && node --trace-warnings index.js",
-    "prod":  "node -e \"process.env.NODE_ENV='development'\" && node index.js",   
+    "dev":   "cross-env NODE_ENV=development nodemon --ignore documents --ignore vector-cache --ignore storage --ignore swagger --trace-warnings index.js",
+    "start": "cross-env NODE_ENV=development nodemon --ignore documents --ignore vector-cache --ignore storage --ignore swagger --trace-warnings index.js",
+    "dev1": "cross-env NODE_ENV=development node --trace-warnings index.js",
+    "prod": "cross-env NODE_ENV=development node index.js",
     "lint":  "yarn prettier --ignore-path ../.prettierignore --write ./endpoints ./models ./utils index.js",
     "swagger": "node ./swagger/init.js",
     "sqlite:migrate": "cd ./utils/prisma && node migrateFromSqlite.js"
@@ -48,6 +48,7 @@
     "chromadb": "^1.5.2",
     "cohere-ai": "^7.9.5",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "elevenlabs": "^0.5.0",
     "express": "^4.18.2",
