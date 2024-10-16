@@ -37,12 +37,6 @@
      fi
 # ---------------------------------------------------------------------------
 
-  if [ "${aCmd}" == "setup" ]; then
-     cd "${aRepos}${aProj}${aStage}"
-     yarn setup
-     fi
-# ---------------------------------------------------------------------------
-
   if [ "${aCmd}" == "copyEnvs" ]; then
      cp -p "${aRepos}/${aProj}${aStage}/collector/.env.example"          "${aRepos}/${aProj}${aStage}/collector/.env"
      cp -p "${aRepos}/${aProj}${aStage}/frontend/.env.example"           "${aRepos}/${aProj}${aStage}/frontend/.env"
