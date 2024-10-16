@@ -1,7 +1,9 @@
 #!/bin/bash
 
     aProj="AnyLLM"
-    aRepos="/E/Repos/Robin"
+#  aRepos="/E/Repos/Robin"
+    aRepos="$(pwd)"; aRepos="${aRepos/${aProj}*/}"
+#   echo "  aRepos: ${aRepos}"; exit
 
 # ---------------------------------------------------------------------------
 
@@ -125,8 +127,10 @@
      aProj="AnyLLM"; aStage="${aArg3}"; if [ "${aStage}" == "" ]; then aStage="dev03-robin"; fi
      aPath="${aRepos}/${aProj}_/._/ZIPs/${aProj}_${aStage}"
      aTS=$( date '+%y%m%d.%H%M' ); aTS=${aTS:1}
+     cd "${aRepos}/${aProj}_/${aStage}"
+     aBranch="$( git branch | awk '/*/ { print substr($0,3) }' )"
      aGIT1="mkdir -p  \"${aPath}\""
-     aGIT2="git checkout-index -a -f --prefix=\"${aPath}/_v${aTS}/\""
+     aGIT2="git checkout-index -a -f --prefix=\"${aPath}/_v${aTS}_${aBranch}/\""
      echo -e "\n  ${aGIT1}\n  ${aGIT2}"; # exit
      eval        "${aGIT1}"
      eval        "${aGIT2}"
