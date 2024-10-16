@@ -1,7 +1,11 @@
 #!/bin/bash
 
-    aProj="AnyLLM"
-    aRepos="/E/Repos/Robin"
+    aProj="AnyLLM_/"
+    
+    aRepos="$(pwd)"; aRepos="${aRepos/${aProj}*/}"
+    aStage="$(pwd)"; aStage="${aStage/*${aProj}/}"; # aStage="${aStage:1}"
+    echo "" 
+    echo "  RepoDir is: ${aRepos}/${aProj}${aStage}";  # exit
 
 # ---------------------------------------------------------------------------
 
@@ -42,14 +46,14 @@
 # ---------------------------------------------------------------------------
 
   if [ "${aCmd}" == "makRemote" ]; then
-     aProj="AnyLLM"; aStage="${aArg3}"; aAcct="robinmattern"
+     aStage="${aArg3}"; aAcct="robinmattern"
      aLoggedIn=$( gh auth status | awk '/robinmattern/' )
   if [ "${aLoggedIn}" == "" ]; then
      aGIT1="gh auth login"
      echo -e "\n  ${aGIT1}\n"; # exit
      eval        "${aGIT1}"
      fi
-     aGIT2="gh repo create ${aProj}_${aStage} --public"
+     aGIT2="gh repo create ${aProj/_\//}_${aStage} --public"
      echo -e "\n  ${aGIT2}\n"; # exit
      eval        "${aGIT2}"
      exit
@@ -85,11 +89,12 @@
      eval        "${aGIT3}"
      exit
      fi
+# ---------------------------------------------------------------------------
 
   if [ "${aCmd}" == "addRemote" ]; then
      aName="origin"; aBranch="master"
-     aProj="AnyLLM"; aStage="${aArg3}"; aSSH="github-ram"; aAcct='robinmattern';
-     aGIT1="git remote add  ${aName}  git@${aSSH}:${aAcct}/${aProj}_${aStage}.git"
+     aStage="${aArg3}"; aSSH="github-ram"; aAcct='robinmattern';
+     aGIT1="git remote add  ${aName}  git@${aSSH}:${aAcct}/${aProj/_\//}_${aStage}.git"
      aGIT2="git branch --set-upstream-to  ${aName}/${aBranch}  ${aBranch}"
      echo -e "\n  ${aGIT1}\n  ${aGIT2}"
      eval        "${aGIT1}"
@@ -122,11 +127,13 @@
 # ---------------------------------------------------------------------------
 
   if [ "${aCmd}" == "backupLocal" ]; then
-     aProj="AnyLLM"; aStage="${aArg3}"; if [ "${aStage}" == "" ]; then aStage="dev03-robin"; fi
-     aPath="${aRepos}/${aProj}_/._/ZIPs/${aProj}_${aStage}"
+     aStage="${aArg3}"; if [ "${aStage}" == "" ]; then aStage="dev03-robin"; fi
+     aPath="${aRepos}/${aProj}._/ZIPs/${aProj/_\//}_${aStage}"
      aTS=$( date '+%y%m%d.%H%M' ); aTS=${aTS:1}
+     cd "${aRepos}/${aProj}${aStage}"
+     aBranch="$( git branch | awk '/*/ { print substr($0,3) }' )"
      aGIT1="mkdir -p  \"${aPath}\""
-     aGIT2="git checkout-index -a -f --prefix=\"${aPath}/_v${aTS}/\""
+     aGIT2="git checkout-index -a -f --prefix=\"${aPath}/_v${aTS}_${aBranch}/\""
      echo -e "\n  ${aGIT1}\n  ${aGIT2}"; # exit
      eval        "${aGIT1}"
      eval        "${aGIT2}"
