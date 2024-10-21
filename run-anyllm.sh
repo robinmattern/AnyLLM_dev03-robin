@@ -1,14 +1,26 @@
 #!/bin/bash
 
+function exit_withCR() {
+  if [ "${OSTYPE:0:6}" == "darwin" ]; then echo ""; fi
+# if [ "$1" == "exit" ]; then exit; fi
+     exit
+     }
+# ---------------------------------------------------------------------------
+
     aProj="AnyLLM_/"
-    aRepos="$(pwd)"; aRepos="${aRepos/${aProj}*/}"
+    aRepos="$(pwd)"; aRepos="${aRepos/${aProj}*/}"; # echo "aRepos: '${aRepos}'"
     aStage="$(pwd)"; aStage="${aStage/*${aProj}/}"; # aStage="${aStage:1}"
-    echo "" 
-    echo "  RepoDir is: ${aRepos}/${aProj}${aStage}";  # exit
+    echo ""
+ if [ "${aStage}" == "$(pwd)" ]; then
+    echo "* You are not in a ${aProj/_\//} Git Repository"
+    exit_withCR
+  else
+    echo "  RepoDir is: ${aRepos}${aProj}${aStage}";  # exit
+    fi
 
 # ---------------------------------------------------------------------------
 
-        aArg1=$1; aArg2=$2; aArg3=$3; aCmd=""
+          aArg1=$1; aArg2=$2; aArg3=$3; aCmd=""
   if [ "${aArg1:0:5}" == "setup" ]; then aCmd="setup";  fi
 
   if [ "${aArg1:0:3}" == "cop" ] && [ "${aArg2:0:3}" == "env" ]; then aCmd="copyEnvs";  fi
@@ -23,7 +35,7 @@
   if [ "${aArg1:0:3}" == "sto" ] && [ "${aArg2:0:1}" == "f"   ]; then aCmd="stopApp";  aArg3="f"; fi
   if [ "${aArg1:0:3}" == "sto" ] && [ "${aArg2:0:1}" == "s"   ]; then aCmd="stopApp";  aArg3="s"; fi
 
-  # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
   if [ "${aCmd}" == "" ]; then
      echo ""
@@ -33,7 +45,7 @@
      echo "    Start {App}     Start AnyLLM App: collector, frontend or server"
      echo "    Stop {App}      Stop AnyLLM App: collector, frontend or server"
 #    echo ""
-     exit
+     exit_withCR
      fi
 # ---------------------------------------------------------------------------
 
@@ -51,21 +63,23 @@
 # ---------------------------------------------------------------------------
 
   if [ "${aCmd}" == "startApp" ]; then
-     aApp=""; 
-     if [ "${aArg3:0:1}" == "c" ] || [ "${aArg3:0:2}" == "-c" ]; then aApp="collector"; fi  
-     if [ "${aArg3:0:1}" == "f" ] || [ "${aArg3:0:2}" == "-f" ]; then aApp="frontend";  fi  
-     if [ "${aArg3:0:1}" == "s" ] || [ "${aArg3:0:2}" == "-s" ]; then aApp="server";    fi  
+     aApp="";
+     if [ "${aArg3:0:1}" == "c" ] || [ "${aArg3:0:2}" == "-c" ]; then aApp="collector"; fi
+     if [ "${aArg3:0:1}" == "f" ] || [ "${aArg3:0:2}" == "-f" ]; then aApp="frontend";  fi
+     if [ "${aArg3:0:1}" == "s" ] || [ "${aArg3:0:2}" == "-s" ]; then aApp="server";    fi
      cd "${aRepos}/${aProj}${aStage}/${aApp}"
-     npm start 
+     npm start
      fi
 # ---------------------------------------------------------------------------
 
   if [ "${aCmd}" == "stopApp" ]; then
-     nPort=""; 
-     if [ "${aArg3:0:1}" == "c" ] || [ "${aArg3:0:2}" == "-c" ]; then nPort="8888"; fi  
-     if [ "${aArg3:0:1}" == "f" ] || [ "${aArg3:0:2}" == "-f" ]; then nPort="3000";  fi  
-     if [ "${aArg3:0:1}" == "s" ] || [ "${aArg3:0:2}" == "-s" ]; then nPort="3001";    fi  
-     if [ "${nPort}" == "" ]; then echo -e "\n* Please provide an {App}: c, f or s"; exit; fi   
+     nPort="";
+     if [ "${aArg3:0:1}" == "c" ] || [ "${aArg3:0:2}" == "-c" ]; then nPort="8888"; fi
+     if [ "${aArg3:0:1}" == "f" ] || [ "${aArg3:0:2}" == "-f" ]; then nPort="3000";  fi
+     if [ "${aArg3:0:1}" == "s" ] || [ "${aArg3:0:2}" == "-s" ]; then nPort="3001";    fi
+     if [ "${nPort}" == "" ]; then echo -e "\n* Please provide an {App}: c, f or s"; exit; fi
      killport ${nPort}
      fi
 # ---------------------------------------------------------------------------
+
+     exit_withCR

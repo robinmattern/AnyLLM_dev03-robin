@@ -1,12 +1,31 @@
 #!/bin/bash
 
-    aProj="AnyLLM_/"
-    
-    aRepos="$(pwd)"; aRepos="${aRepos/${aProj}*/}"
-    aStage="$(pwd)"; aStage="${aStage/*${aProj}/}"; # aStage="${aStage:1}"
-    echo "" 
-    echo "  RepoDir is: ${aRepos}/${aProj}${aStage}";  # exit
+    echo ""
 
+function exit_withCR() {
+  if [ "${OSTYPE:0:6}" == "darwin" ]; then echo ""; fi
+# if [ "$1" == "exit" ]; then exit; fi
+     exit
+     }
+# ---------------------------------------------------------------------------
+
+ if [ ! -d ".git" ]; then
+    echo "* You are not in a Git Repository"
+    exit_withCR
+    fi
+
+    aRepo=$( git remote -v | awk '/push/ { sub( /.+\//, ""); sub( /\.git.+/, "" ); print }' );  # echo "  aRepo: '${aRepo}'";
+    aProj="${aRepo%%_*}_/";                                                                     # echo "  aProj: '${aProj}'"; # exit
+
+    aRepos="$(pwd)"; aRepos="${aRepos/${aProj}*/}"; # echo "  aRepos: '${aRepos}'"
+    aStage="$(pwd)"; aStage="${aStage/*${aProj}/}"; # aStage="${aStage:1}"
+
+ if [ "${aStage}" == "$(pwd)" ]; then
+    echo "* You are not in a ${aProj/_\//} Git Repository"
+    exit_withCR
+  else
+    echo "  RepoDir is: ${aRepos}${aProj}${aStage}";  # exit
+    fi
 # ---------------------------------------------------------------------------
 
         aArg1=$1; aArg2=$2; aArg3=$3; aCmd=""
@@ -25,17 +44,17 @@
   if [ "${aCmd}" == "" ]; then
      echo ""
      echo "  GitR Commands"
-     echo "    Show last       Show last commit"
-     echo "    Show remote     Show current remote repositories"
-     echo "    Set remote      Set current remote repository"
-     echo "    Add remote      Add new origin remote repository"
-     echo "    Make remote     Create new remote repository in github"
-     echo "    Remove remote   Remove origin remote"
-     echo "    Backup local    Copy local repo to ../ZIPs"
-     echo "    Track Branch    Set tracking for origin/branch"
-     echo "    Install gh      Install the GIT CLI"
+     echo "    Show last          Show last commit"
+     echo "    Show remotes       Show current remote repositories"
+     echo "    Set remote {stage} Set current remote repository"
+     echo "    Add remote {stage} Add new origin remote repository"
+     echo "    Make remote {repo} Create new remote repository in github"
+     echo "    Remove remote      Remove origin remote"
+     echo "    Backup local       Copy local repo to ../ZIPs"
+     echo "    Track Branch       Set tracking for origin/branch"
+     echo "    Install gh         Install the GIT CLI"
 #    echo ""
-     exit
+     exit_withCR
      fi
 # ---------------------------------------------------------------------------
 
@@ -56,7 +75,7 @@
      aGIT2="gh repo create ${aProj/_\//}_${aStage} --public"
      echo -e "\n  ${aGIT2}\n"; # exit
      eval        "${aGIT2}"
-     exit
+     exit_withCR
 
 #  ? What account do you want to log into? GitHub.com
 #  ? What is your preferred protocol for Git operations on this host? SSH
@@ -87,13 +106,18 @@
      eval        "${aGIT1}"
      eval        "${aGIT2}"
      eval        "${aGIT3}"
-     exit
+     exit_withCR
      fi
 # ---------------------------------------------------------------------------
 
   if [ "${aCmd}" == "addRemote" ]; then
      aName="origin"; aBranch="master"
      aStage="${aArg3}"; aSSH="github-ram"; aAcct='robinmattern';
+  if [ "${aStage}" == "" ]; then
+     echo "* You must provide a Stage name."
+     exit_withCR
+     fi
+     echo " Adding a Remote, ${aName}, for Account, ${aAcct}, and branch, ${aBranch}"
      aGIT1="git remote add  ${aName}  git@${aSSH}:${aAcct}/${aProj/_\//}_${aStage}.git"
      aGIT2="git branch --set-upstream-to  ${aName}/${aBranch}  ${aBranch}"
      echo -e "\n  ${aGIT1}\n  ${aGIT2}"
@@ -115,7 +139,7 @@
   if [ "${aCmd}" == "shoRemote" ]; then
      echo ""
      git remote -v | awk '{ print "  " $0 }'
-     exit
+     exit_withCR
      fi
 # ---------------------------------------------------------------------------
 
@@ -127,7 +151,9 @@
 # ---------------------------------------------------------------------------
 
   if [ "${aCmd}" == "backupLocal" ]; then
-     aStage="${aArg3}"; if [ "${aStage}" == "" ]; then aStage="dev03-robin"; fi
+#    aStage="${aArg3}"; if [ "${aStage}" == "" ]; then aStage="dev03-robin"; fi
+                        if [ "${aArg3}"  != "" ]; then aStage="${aArg3}"; fi
+
      aPath="${aRepos}/${aProj}._/ZIPs/${aProj/_\//}_${aStage}"
      aTS=$( date '+%y%m%d.%H%M' ); aTS=${aTS:1}
      cd "${aRepos}/${aProj}${aStage}"
@@ -137,7 +163,7 @@
      echo -e "\n  ${aGIT1}\n  ${aGIT2}"; # exit
      eval        "${aGIT1}"
      eval        "${aGIT2}"
-    fi
+     fi
 # ---------------------------------------------------------------------------
 
 #   mkdir -p ../temp-comparison/b41012.00_Master-files
@@ -150,3 +176,7 @@
 #   git clone --mirror /path/to/original/repo /path/to/backup/repo.git
 #   git checkout-index -a -f --prefix=/path/to/backup/destination/
 #   git ls-files --others --exclude-standard -z | xargs -0 -I {} cp --parents {} /path/to/backup/destination/ && git checkout-index -a -f --prefix=/path/to/backup/destination/
+
+     exit_withCR
+
+
