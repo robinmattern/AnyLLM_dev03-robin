@@ -1,7 +1,9 @@
 #!/bin/bash
+# gitr.sh v05.41022.1651 
+    aVer="v05.41023.0711"
 
-    echo ""
-
+# ---------------------------------------------------------------------------
+    
 function exit_withCR() {
   if [ "${OSTYPE:0:6}" == "darwin" ]; then echo ""; fi
 # if [ "$1" == "exit" ]; then exit; fi
@@ -9,23 +11,45 @@ function exit_withCR() {
      }
 # ---------------------------------------------------------------------------
 
- if [ ! -d ".git" ]; then
-    echo "* You are not in a Git Repository"
-    exit_withCR
-    fi
+  if [ ! -d ".git" ]; then
+     echo -e "\n* You are not in a Git Repository"
+     exit_withCR
+     fi
+# ---------------------------------------------------------------------------
 
-    aRepo=$( git remote -v | awk '/push/ { sub( /.+\//, ""); sub( /\.git.+/, "" ); print }' );  # echo "  aRepo: '${aRepo}'";
-    aProj="${aRepo%%_*}_/";                                                                     # echo "  aProj: '${aProj}'"; # exit
+ function getRepoDir() {
 
-    aRepos="$(pwd)"; aRepos="${aRepos/${aProj}*/}"; # echo "  aRepos: '${aRepos}'"
-    aStage="$(pwd)"; aStage="${aStage/*${aProj}/}"; # aStage="${aStage:1}"
+   aRepos="$( echo "$(pwd)"       | awk '{ match($0, /.*[Rr][Ee][Pp][Oo][Ss]/); print substr($0,1,RLENGTH) }' )";
+   aRepo="$( git remote -v        | awk '/push/ { sub( /.+\//, ""); sub( /\.git.+/, "" ); print }' )"
+#  aProjDir="${aRepoDir%%_*}"
+#  aProjDir="$( echo "$(pwd)"     | awk '{ sub( "'${aRepoDir}'", "" ); print }' )"
+#  aAWK='{ sub( "'${aRepos//\//\/}'/", "" ); sub( /[\/_].*/, "_"); print }';               echo "  aAWK:    '${aAWK}'"  # double up /s
+   aAWK='{ sub( "'${aRepos}'/", "" );  sub( /_\/*.+/, "" ); sub( /\/.+/, "" ); print }'; # echo "  aAWK:    '${aAWK}'"
+   aProject="$( echo "$(pwd)"     | awk "${aAWK}" )"
+   aStgDir="$(  echo "$(pwd)"     | awk '{ sub( "'.+${aProject}'", "" ); print }' )"
+   aStage="$(   echo "${aStgDir}" | awk '{ sub( "^[_\/]+"        , "" ); print }' )"
+   aRepoDir="${aRepos}/${aProject}${aStgDir}"
+   if [ "${aRepo}" == "" ]; then aRepo="${aProject}${aStgDir}"; fi 
 
+#  echo "  aRepos:   '${aRepos}'"
+#  echo "  aRepo:    '${aRepo}'"
+#  echo "  aProject: '${aProject}'"
+#  echo "  aStage:   '${aStage}'"
+#  echo "  aRepoDir: '${aRepoDir}'"
+#  exit_withCR
+   }
+# ---------------------------------------------------------------------------
+
+    getRepoDir
+
+    echo ""
  if [ "${aStage}" == "$(pwd)" ]; then
-    echo "* You are not in a ${aProj/_\//} Git Repository"
+#if [ "${aStage}" == "" ]; then
+    echo "* You are not in a ${aProj/_\//}_/{Stage} Git Repository"
     exit_withCR
   else
-    echo "  RepoDir is: ${aRepos}${aProj}${aStage}";  # exit
-    fi
+    echo "  RepoDir is: ${aRepoDir}";   # exit_withCR
+    fi    
 # ---------------------------------------------------------------------------
 
         aArg1=$1; aArg2=$2; aArg3=$3; aCmd=""
@@ -43,7 +67,7 @@ function exit_withCR() {
 
   if [ "${aCmd}" == "" ]; then
      echo ""
-     echo "  GitR Commands"
+     echo "  GitR Commands (${aVer})"
      echo "    Show last          Show last commit"
      echo "    Show remotes       Show current remote repositories"
      echo "    Set remote {stage} Set current remote repository"
@@ -60,7 +84,8 @@ function exit_withCR() {
 
   if [ "${aCmd}" == "shoLast" ]; then
 #    git show $(git rev-parse HEAD) | awk '/^commit / { c = substr($0,8,8) }; /^Author:/ { a = substr($0,8) }; /^Date:/ { print "\n" c substr($0,7,26) a }'
-     git show $(git rev-parse HEAD) | awk '/^commit / { c = substr($0,8,8) }; /^Author:/ { a = substr($0,8) }; /^Date:/ { d = substr($0,7,26) }; NR == 5 { print "\n  " c d a $0 }'
+#    git show $(git rev-parse HEAD) | awk '/^commit / { c = substr($0,8,8) }; /^Author:/ { a = substr($0,8) }; /^Date:/ { d = substr($0,7,26) }; NR == 5 { print "\n  " c d a $0 }'
+     git show $(git rev-parse HEAD) | awk '/^commit / { c = substr($0,8,8) }; /^Author:/ { a = substr($0,8) }; /^Date:/ { d = substr($0,6,27) }; NR == 5 { print "\n  " c $0 d"  "a }'
      fi
 # ---------------------------------------------------------------------------
 
