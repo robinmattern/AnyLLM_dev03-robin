@@ -1,9 +1,9 @@
 #!/bin/bash
-# gitr.sh v05.41022.1651 
+# gitr.sh v05.41022.1651
     aVer="v05.41023.0711"
 
 # ---------------------------------------------------------------------------
-    
+
 function exit_withCR() {
   if [ "${OSTYPE:0:6}" == "darwin" ]; then echo ""; fi
 # if [ "$1" == "exit" ]; then exit; fi
@@ -26,17 +26,21 @@ function exit_withCR() {
 #  aAWK='{ sub( "'${aRepos//\//\/}'/", "" ); sub( /[\/_].*/, "_"); print }';               echo "  aAWK:    '${aAWK}'"  # double up /s
    aAWK='{ sub( "'${aRepos}'/", "" );  sub( /_\/*.+/, "" ); sub( /\/.+/, "" ); print }'; # echo "  aAWK:    '${aAWK}'"
    aProject="$( echo "$(pwd)"     | awk "${aAWK}" )"
+#  echo "  aProject:    '${aProject}'"; exit
+
    aStgDir="$(  echo "$(pwd)"     | awk '{ sub( "'.+${aProject}'", "" ); print }' )"
    aStage="$(   echo "${aStgDir}" | awk '{ sub( "^[_\/]+"        , "" ); print }' )"
    aRepoDir="${aRepos}/${aProject}${aStgDir}"
-   if [ "${aRepo}" == "" ]; then aRepo="${aProject}${aStgDir}"; fi 
+   if [ "${aRepo}" == "" ]; then aRepo="${aProject}${aStgDir}"; fi
 
-#  echo "  aRepos:   '${aRepos}'"
-#  echo "  aRepo:    '${aRepo}'"
-#  echo "  aProject: '${aProject}'"
-#  echo "  aStage:   '${aStage}'"
-#  echo "  aRepoDir: '${aRepoDir}'"
-#  exit_withCR
+   if [ "test" == "text" ]; then
+   echo "  aRepos:   '${aRepos}'"
+   echo "  aRepo:    '${aRepo}'"
+   echo "  aProject: '${aProject}'"
+   echo "  aStage:   '${aStage}'"
+   echo "  aRepoDir: '${aRepoDir}'"
+   exit_withCR
+   fi
    }
 # ---------------------------------------------------------------------------
 
@@ -49,7 +53,7 @@ function exit_withCR() {
     exit_withCR
   else
     echo "  RepoDir is: ${aRepoDir}";   # exit_withCR
-    fi    
+    fi
 # ---------------------------------------------------------------------------
 
         aArg1=$1; aArg2=$2; aArg3=$3; aCmd=""
@@ -181,11 +185,11 @@ function exit_withCR() {
 
      aPath="${aRepos}/${aProj}._/ZIPs/${aProj/_\//}_${aStage}"
      aTS=$( date '+%y%m%d.%H%M' ); aTS=${aTS:1}
-     cd "${aRepos}/${aProj}${aStage}"
+     cd "${aRepoDir}"
      aBranch="$( git branch | awk '/*/ { print substr($0,3) }' )"
      aGIT1="mkdir -p  \"${aPath}\""
      aGIT2="git checkout-index -a -f --prefix=\"${aPath}/_v${aTS}_${aBranch}/\""
-     echo -e "\n  ${aGIT1}\n  ${aGIT2}"; # exit
+     echo -e "\n  ${aGIT1}\n  ${aGIT2}"; #  exit
      eval        "${aGIT1}"
      eval        "${aGIT2}"
      fi
